@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/file_conversion}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      ack-mode: manual_immediate
+      concurrency: ${SPRING_KAFKA_LISTENER_CONCURRENCY:3}
+    consumer:
+      group-id: file-conversion-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "com.program.file_conversion_service.kafka.dto"
+        spring.json.value.default.type: com.program.file_conversion_service.kafka.dto.ConvertRequest
+        spring.json.use.type.headers: false
+    producer:
+      acks: all
+      retries: 10
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        compression.type: snappy
+
+app:
+  kafka:
+    input-topic: file-conversion-input
+    output-topic: file-conversion-output
+    dead-letter-suffix: -dlt
+    partitions: ${APP_KAFKA_PARTITIONS:3}
+    replication-factor: ${APP_KAFKA_REPLICATION_FACTOR:3}
+    min-in-sync-replicas: ${APP_KAFKA_MIN_IN_SYNC_REPLICAS:2}
+    consumer-max-attempts: ${APP_KAFKA_CONSUMER_MAX_ATTEMPTS:3}
+    consumer-backoff-ms: ${APP_KAFKA_CONSUMER_BACKOFF_MS:1000}
+  conversion:
+    delete-source-after-conversion: ${APP_CONVERSION_DELETE_SOURCE:false}
+    source-prefix: ${APP_CONVERSION_SOURCE_PREFIX:uploads}
+    result-prefix: ${APP_CONVERSION_RESULT_PREFIX:converted}
+  outbox:
+    publish-interval-ms: ${APP_OUTBOX_PUBLISH_INTERVAL_MS:1000}
+    batch-size: ${APP_OUTBOX_BATCH_SIZE:20}
+    max-publish-attempts: ${APP_OUTBOX_MAX_PUBLISH_ATTEMPTS:10}
+
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  default-bucket: ${MINIO_BUCKET:files}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.program.file_conversion_service: INFO
