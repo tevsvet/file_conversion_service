@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/file_conversion}
@@ -54,7 +51,6 @@ app:
     consumer-backoff-ms: ${APP_KAFKA_CONSUMER_BACKOFF_MS:1000}
   conversion:
     delete-source-after-conversion: ${APP_CONVERSION_DELETE_SOURCE:false}
-    source-prefix: ${APP_CONVERSION_SOURCE_PREFIX:uploads}
     result-prefix: ${APP_CONVERSION_RESULT_PREFIX:converted}
   outbox:
     publish-interval-ms: ${APP_OUTBOX_PUBLISH_INTERVAL_MS:1000}
@@ -66,12 +62,6 @@ minio:
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
   default-bucket: ${MINIO_BUCKET:files}
-
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
 
 logging:
   level:

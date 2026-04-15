@@ -35,10 +35,6 @@ public class OutboxEventEntity {
     @Column(name = "aggregate_id", nullable = false)
     private UUID aggregateId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "event_type", nullable = false)
-    private OutboxEventType eventType;
-
     @Column(name = "payload", nullable = false, columnDefinition = "TEXT")
     private String payload;
 

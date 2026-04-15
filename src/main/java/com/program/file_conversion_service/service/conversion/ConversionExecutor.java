@@ -1,8 +1,9 @@
 package com.program.file_conversion_service.service.conversion;
 
-import com.program.file_conversion_service.api.dto.ConvertedFile;
+import com.program.file_conversion_service.dto.ConvertedFile;
 import com.program.file_conversion_service.config.properties.ConversionProperties;
 import com.program.file_conversion_service.domain.model.SupportedFileType;
+import com.program.file_conversion_service.dto.ConversionExecutionResult;
 import com.program.file_conversion_service.exception.FileStorageException;
 import com.program.file_conversion_service.kafka.dto.ConvertRequest;
 import com.program.file_conversion_service.minio.MinioService;

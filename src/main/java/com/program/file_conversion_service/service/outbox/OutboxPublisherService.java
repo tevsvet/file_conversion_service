@@ -4,17 +4,15 @@ import com.program.file_conversion_service.config.properties.OutboxProperties;
 import com.program.file_conversion_service.config.properties.KafkaTopicsProperties;
 import com.program.file_conversion_service.domain.dao.OutboxEventRepository;
 import com.program.file_conversion_service.domain.model.OutboxEventEntity;
-import com.program.file_conversion_service.domain.model.OutboxEventType;
 import com.program.file_conversion_service.domain.model.OutboxStatus;
+import com.program.file_conversion_service.kafka.dto.ConvertResult;
 import com.program.file_conversion_service.kafka.producer.ConversionEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,9 +35,9 @@ public class OutboxPublisherService {
 
         for (OutboxEventEntity event : pendingEvents) {
             try {
-                Object payload = outboxService.deserializePayload(event);
+                ConvertResult payload = outboxService.deserializePayload(event);
                 conversionEventPublisher.publish(
-                        topicName(event.getEventType()),
+                        kafkaTopicsProperties.outputTopic(),
                         event.getPartitionKey(),
                         payload,
                         "outbox event " + event.getId()
@@ -55,12 +53,5 @@ public class OutboxPublisherService {
                 );
             }
         }
-    }
-
-    private String topicName(OutboxEventType eventType) {
-        return switch (eventType) {
-            case CONVERSION_REQUEST -> kafkaTopicsProperties.inputTopic();
-            case CONVERSION_RESULT -> kafkaTopicsProperties.outputTopic();
-        };
     }
 }

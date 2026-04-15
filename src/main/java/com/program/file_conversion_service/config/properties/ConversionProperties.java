@@ -5,6 +5,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.conversion")
 public record ConversionProperties(
         boolean deleteSourceAfterConversion,
-        String sourcePrefix,
         String resultPrefix
 ) { }

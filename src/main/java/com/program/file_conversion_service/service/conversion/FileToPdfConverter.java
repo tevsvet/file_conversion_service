@@ -1,6 +1,6 @@
 package com.program.file_conversion_service.service.conversion;
 
-import com.program.file_conversion_service.api.dto.ConvertedFile;
+import com.program.file_conversion_service.dto.ConvertedFile;
 import com.program.file_conversion_service.domain.model.SupportedFileType;
 
 import java.io.IOException;

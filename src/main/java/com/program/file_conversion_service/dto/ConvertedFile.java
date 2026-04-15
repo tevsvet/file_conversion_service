@@ -1,4 +1,4 @@
-package com.program.file_conversion_service.api.dto;
+package com.program.file_conversion_service.dto;
 
 public record ConvertedFile(
         byte[] content,

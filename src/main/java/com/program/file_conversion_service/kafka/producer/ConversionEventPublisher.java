@@ -1,7 +1,6 @@
 package com.program.file_conversion_service.kafka.producer;
 
 import com.program.file_conversion_service.config.properties.KafkaTopicsProperties;
-import com.program.file_conversion_service.kafka.dto.ConvertRequest;
 import com.program.file_conversion_service.kafka.dto.ConvertResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +17,6 @@ import java.util.concurrent.CompletionException;
 public class ConversionEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final KafkaTopicsProperties kafkaTopicsProperties;
-
-    public void publishRequest(ConvertRequest request) {
-        publish(kafkaTopicsProperties.inputTopic(), request.taskId().toString(), request, "conversion request");
-    }
-
-    public void publishResult(ConvertResult result) {
-        publish(kafkaTopicsProperties.outputTopic(), result.taskId().toString(), result, "conversion result");
-    }
 
     public void publish(String topic, String key, Object payload, String payloadDescription) {
         try {
