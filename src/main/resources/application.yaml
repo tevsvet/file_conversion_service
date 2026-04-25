@@ -1,4 +1,9 @@
+server:
+  port: 8081
+
 spring:
+  application:
+    name: file-conversion-service
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/file_conversion}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -38,6 +43,11 @@ spring:
         enable.idempotence: true
         max.in.flight.requests.per.connection: 5
         compression.type: snappy
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 
 app:
   kafka:
