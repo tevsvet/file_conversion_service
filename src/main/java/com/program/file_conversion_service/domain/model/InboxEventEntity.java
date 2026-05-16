@@ -18,47 +18,44 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "outbox_event")
+@Table(name = "inbox_event")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutboxEventEntity {
+public class InboxEventEntity {
 
     @Id
     private UUID id;
 
-    @Column(name = "aggregate_type", nullable = false)
-    private String aggregateType;
+    @Column(name = "task_id", nullable = false, unique = true)
+    private UUID taskId;
 
-    @Column(name = "aggregate_id", nullable = false)
-    private UUID aggregateId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InboxStatus status;
+
+    @Column(name = "source_bucket", nullable = false)
+    private String sourceBucket;
+
+    @Column(name = "source_object_key", nullable = false)
+    private String sourceObjectKey;
 
     @Column(name = "payload", nullable = false, columnDefinition = "TEXT")
     private String payload;
 
-    @Column(name = "dedup_key", nullable = false, unique = true)
-    private String dedupKey;
-
-    @Column(name = "partition_key", nullable = false)
-    private String partitionKey;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OutboxStatus status;
-
     @Column(nullable = false)
     private int attempts;
-
-    @Column(name = "available_at", nullable = false)
-    private LocalDateTime availableAt;
 
     @Column(name = "last_error", columnDefinition = "TEXT")
     private String lastError;
 
-    @Column(name = "published_at")
-    private LocalDateTime publishedAt;
+    @Column(name = "available_at", nullable = false)
+    private LocalDateTime availableAt;
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
