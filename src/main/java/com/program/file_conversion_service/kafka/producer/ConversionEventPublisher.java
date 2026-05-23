@@ -17,21 +17,23 @@ import java.util.concurrent.CompletionException;
 public class ConversionEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTopicsProperties kafkaTopicsProperties;
 
-    public void publish(String topic, String key, Object payload, String payloadDescription) {
+    public void publish(ConvertResult payload) {
+        String key = payload.taskId().toString();
+        String topic = kafkaTopicsProperties.outputTopic();
         try {
             SendResult<String, Object> sendResult = kafkaTemplate.send(topic, key, payload).join();
             RecordMetadata metadata = sendResult.getRecordMetadata();
             log.info(
-                    "Published {} to topic={}, partition={}, offset={}, key={}",
-                    payloadDescription,
+                    "Published conversion result to topic={}, partition={}, offset={}, key={}",
                     metadata.topic(),
                     metadata.partition(),
                     metadata.offset(),
                     key
             );
         } catch (CompletionException ex) {
-            throw new RuntimeException("Kafka publish failed for " + payloadDescription + " with key=" + key, ex.getCause());
+            throw new RuntimeException("Kafka publish failed for conversion result with key=" + key, ex.getCause());
         }
     }
 }
